@@ -33,6 +33,10 @@ const User = require("./Routes/UserRoutes");
 app.use("/api/v1", Home);
 app.use("/api/v1", User);
 
+app.get("/", (req, res) => {
+  res.send("Decor Backend");
+});
+
 app.get("/signuptest", (req, res) => {
   res.render("signup");
 });
