@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(
   fileUpload({
     useTempFiles: true,
-    tempFileDir: "/temp/",
+    tempFileDir: "/tmp/",
   })
 );
 app.use(express.urlencoded({ extended: true }));
@@ -45,10 +45,6 @@ app.use("/api/v1", User);
 
 app.get("/", (req, res) => {
   res.send("Decor Backend");
-});
-
-app.get("/signuptest", (req, res) => {
-  res.render("signup");
 });
 
 module.exports = app;
