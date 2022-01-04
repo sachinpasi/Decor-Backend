@@ -225,7 +225,7 @@ exports.UpdateUserDetails = SuperPromise(async (req, res, next) => {
     const ResponseFromCloudinaryAfterUpload =
       await cloudinary.v2.uploader.upload(req.files.photo.tempFilePath, {
         folder: "users",
-        width: 150,
+        width: 200,
         crop: "scale",
       });
 
@@ -259,7 +259,11 @@ exports.Admin_GetUserById = SuperPromise(async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
   if (!user) {
-    return next(new CustomError("User Not Found", 400));
+    return res.status(400).json({
+      error: {
+        message: "User Not Found",
+      },
+    });
   }
 
   res.status(200).json({
@@ -273,6 +277,7 @@ exports.Admin_UpdateUserById = SuperPromise(async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     role: req.body.role,
+    phoneNumber: req.body.phoneNumber,
   };
 
   if (req.files) {
@@ -288,7 +293,8 @@ exports.Admin_UpdateUserById = SuperPromise(async (req, res, next) => {
     const ResponseFromCloudinaryAfterUpload =
       await cloudinary.v2.uploader.upload(req.files.photo.tempFilePath, {
         folder: "users",
-        width: 150,
+        width: 500,
+        height: 500,
         crop: "scale",
       });
 
@@ -296,6 +302,22 @@ exports.Admin_UpdateUserById = SuperPromise(async (req, res, next) => {
       id: ResponseFromCloudinaryAfterUpload.public_id,
       secure_url: ResponseFromCloudinaryAfterUpload.secure_url,
     };
+  }
+
+  if (req.body.phoneNumber) {
+    const isPhoneNumberAlreadyInDB = await User.find({
+      phoneNumber: req.body.phoneNumber,
+    });
+
+    console.log(isPhoneNumberAlreadyInDB);
+
+    if (isPhoneNumberAlreadyInDB.length !== 0) {
+      return res.status(400).json({
+        error: {
+          message: "Phone Number Is Already Registered",
+        },
+      });
+    }
   }
 
   const user = await User.findByIdAndUpdate(req.params.id, NewData, {

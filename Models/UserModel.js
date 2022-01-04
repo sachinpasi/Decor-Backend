@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema({
   phoneNumber: {
     type: String,
     minlength: 10,
-    unique: true,
   },
   role: {
     type: String,

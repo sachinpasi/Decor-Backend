@@ -27,7 +27,11 @@ exports.isLoggedIn = SuperPromise(async (req, res, next) => {
 exports.Role = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
-      return next(new CustomError("Access Denied", 403));
+      return res.status(403).json({
+        error: {
+          message: "Access Denied",
+        },
+      });
     }
     next();
   };
