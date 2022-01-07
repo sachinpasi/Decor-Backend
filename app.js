@@ -38,10 +38,14 @@ app.use(express.urlencoded({ extended: true }));
 //Routes Imported
 const Home = require("./Routes/HomeRoute");
 const User = require("./Routes/UserRoutes");
+const Product = require("./Routes/ProductRoute");
+const Category = require("./Routes/CategoryRoute");
 
 //Router Middleware
 app.use("/api/v1", Home);
 app.use("/api/v1", User);
+app.use("/api/v1", Product);
+app.use("/api/v1", Category);
 
 app.get("/", (req, res) => {
   res.send("Decor Backend");
