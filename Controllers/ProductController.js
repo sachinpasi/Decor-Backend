@@ -76,7 +76,7 @@ exports.CreateProduct = SuperPromise(async (req, res, next) => {
 });
 
 exports.GetAllProducts = SuperPromise(async (req, res, next) => {
-  const resultPerPage = 6;
+  let resultPerPage = req.query.resultPerPage;
   let sortField = req.query.sortField ? req.query.sortField : "name";
   let sortCriteria = req.query.sortCriteria ? req.query.sortCriteria : "asc";
 
@@ -88,8 +88,9 @@ exports.GetAllProducts = SuperPromise(async (req, res, next) => {
 
   let products = await productsObj.base;
   const filteredProductNumber = products.length;
-
-  productsObj.pager(resultPerPage);
+  if (resultPerPage) {
+    productsObj.pager(parseInt(resultPerPage));
+  }
 
   products = await productsObj.base
     .populate("category")
