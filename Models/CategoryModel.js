@@ -9,6 +9,10 @@ const categorySchema = mongoose.Schema(
       unique: true,
       trim: true,
     },
+    productCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

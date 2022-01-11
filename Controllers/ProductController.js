@@ -1,4 +1,5 @@
 const Product = require("../Models/ProductModel");
+const Category = require("../Models/CategoryModel");
 const SuperPromise = require("../Middlewares/SuperPromise");
 const WhereClause = require("../Utils/WhereClause");
 const fileUpload = require("express-fileupload");
@@ -92,10 +93,18 @@ exports.GetAllProducts = SuperPromise(async (req, res, next) => {
     productsObj.pager(parseInt(resultPerPage));
   }
 
-  products = await productsObj.base
-    .populate("category")
-    .sort([[sortField, sortCriteria]])
-    .clone();
+  if (req.params.category) {
+    products = await productsObj.base
+      .find({ category: req.params.category })
+      .populate("category")
+      .sort([[sortField, sortCriteria]])
+      .clone();
+  } else {
+    products = await productsObj.base
+      .populate("category")
+      .sort([[sortField, sortCriteria]])
+      .clone();
+  }
 
   res.status(200).json({
     success: true,
@@ -232,7 +241,7 @@ exports.Admin_GetAllProducts = SuperPromise(async (req, res, next) => {
 
 exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
   let product = await Product.findById(req.params.id);
-
+  let MainDisplayPhoto;
   let ImagesArray = [];
 
   if (!product) {
@@ -243,29 +252,64 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
     });
   }
 
-  if (req.files) {
-    for (let index = 0; index < product.photos.length; index++) {
-      const res = await cloudinary.v2.uploader.destroy(
-        product.photos[index].id
-      );
-    }
+  if (req.files.displayPhoto) {
+    let products = await cloudinary.v2.uploader.destroy(
+      product.displayPhoto.id
+    );
+    console.log(products);
+    let result = await cloudinary.v2.uploader.upload(
+      req.files.displayPhoto.tempFilePath,
+      {
+        folder: "Products-Display-Photo",
+        width: "2500",
+        height: "3500",
+      }
+    );
+    MainDisplayPhoto = {
+      id: result.public_id,
+      secure_url: result.secure_url,
+    };
+  }
 
-    for (let index = 0; index < req.files.photos.length; index++) {
+  if (req.files.photos) {
+    if (req.files.photos.constructor === Array) {
+      for (let index = 0; index < product.photos.length; index++) {
+        const res = await cloudinary.v2.uploader.destroy(
+          product.photos[index].id
+        );
+      }
+
+      for (let index = 0; index < req.files.photos.length; index++) {
+        let result = await cloudinary.v2.uploader.upload(
+          req.files.photos[index].tempFilePath,
+          {
+            folder: "Products-Photos",
+            width: "2500",
+            height: "3500",
+          }
+        );
+        ImagesArray.push({
+          id: (await result).public_id,
+          secure_url: (await result).secure_url,
+        });
+      }
+    } else {
       let result = await cloudinary.v2.uploader.upload(
-        req.files.photos[index].tempFilePath,
+        req.files.photos.tempFilePath,
         {
-          folder: "products",
+          folder: "Products-Photos",
           width: "2500",
           height: "3500",
         }
       );
       ImagesArray.push({
-        id: (await result).public_id,
-        secure_url: (await result).secure_url,
+        id: result.public_id,
+        secure_url: result.secure_url,
       });
     }
   }
 
+  req.body.displayPhoto = MainDisplayPhoto;
   req.body.photos = ImagesArray;
 
   product = await Product.findByIdAndUpdate(req.params.id, req.body, {

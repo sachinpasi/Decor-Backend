@@ -1,4 +1,6 @@
 const Category = require("../Models/CategoryModel");
+const Product = require("../Models/ProductModel");
+
 const SuperPromise = require("../Middlewares/SuperPromise");
 
 exports.CreateCategory = SuperPromise(async (req, res, next) => {
@@ -65,7 +67,7 @@ exports.DeleteCategoryById = SuperPromise(async (req, res, next) => {
 exports.GetAllCategory = SuperPromise(async (req, res, next) => {
   const categories = await Category.find();
 
-  res.status(200).json({
+  await res.status(200).json({
     success: true,
     categories,
   });
