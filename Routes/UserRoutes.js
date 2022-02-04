@@ -16,6 +16,7 @@ const {
   Admin_GetUserById,
   Admin_UpdateUserById,
   Admin_DeleteUserById,
+  CheckTokenExpiry,
 } = require("../Controllers/UserController");
 const { isLoggedIn, Role } = require("../Middlewares/User");
 
@@ -57,6 +58,9 @@ Router.post(
   ],
   Login
 );
+
+Router.get("/checkToken", CheckTokenExpiry);
+
 Router.route("/logout").get(Logout);
 Router.route("/forgotPassword").post(SendForgotPasswordLink);
 Router.route("/password/reset/:token").post(ActualPasswordReset);

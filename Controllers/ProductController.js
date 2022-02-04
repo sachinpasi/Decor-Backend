@@ -22,8 +22,8 @@ exports.CreateProduct = SuperPromise(async (req, res, next) => {
       req.files.displayPhoto.tempFilePath,
       {
         folder: "Products-Display-Photo",
-        width: "2500",
-        height: "3500",
+        width: "1000",
+        height: "1000",
       }
     );
     MainDisplayPhoto = {
@@ -39,8 +39,8 @@ exports.CreateProduct = SuperPromise(async (req, res, next) => {
           req.files.photos[index].tempFilePath,
           {
             folder: "Products-Photos",
-            width: "2500",
-            height: "3500",
+            width: "1000",
+            height: "1000",
           }
         );
         ImagesArray.push({
@@ -53,8 +53,8 @@ exports.CreateProduct = SuperPromise(async (req, res, next) => {
         req.files.photos.tempFilePath,
         {
           folder: "products",
-          width: "2500",
-          height: "3500",
+          width: "1000",
+          height: "1000",
         }
       );
       ImagesArray.push({
@@ -155,6 +155,33 @@ exports.GetReviewsByProductId = SuperPromise(async (req, res, next) => {
   });
 });
 
+exports.Admin_AddProductStockById = SuperPromise(async (req, res, next) => {
+  const product = await Product.findById(req.params.id);
+
+  const AddBy = req.body.addBy;
+
+  if (!product) {
+    return res.status(404).json({
+      error: {
+        message: "Product Not Found",
+      },
+    });
+  }
+
+  const CurrentStock = product?.stock;
+
+  let NewStock = parseInt(CurrentStock) + parseInt(AddBy);
+
+  product.stock = NewStock;
+
+  product.save();
+
+  res.status(200).json({
+    success: true,
+    message: `Stock Updated, Added ${req.body.addBy}  `,
+  });
+});
+
 exports.AddReview = SuperPromise(async (req, res, next) => {
   const { rating, comment, productId } = req.body;
 
@@ -231,11 +258,40 @@ exports.DeleteReview = SuperPromise(async (req, res, next) => {
 });
 
 exports.Admin_GetAllProducts = SuperPromise(async (req, res, next) => {
-  const products = await Product.find().populate("category");
+  let resultPerPage = req.query.resultPerPage;
+  let sortField = req.query.sortField ? req.query.sortField : "name";
+  let sortCriteria = req.query.sortCriteria ? req.query.sortCriteria : "asc";
+
+  const totalcountProduct = await Product.countDocuments();
+
+  const productsObj = new WhereClause(Product.find(), req.query)
+    .search()
+    .filter();
+
+  let products = await productsObj.base;
+  const filteredProductNumber = products.length;
+  if (resultPerPage) {
+    productsObj.pager(parseInt(resultPerPage));
+  }
+
+  if (req.params.category) {
+    products = await productsObj.base
+      .find({ category: req.params.category })
+      .populate("category")
+      .sort([[sortField, sortCriteria]])
+      .clone();
+  } else {
+    products = await productsObj.base
+      .populate("category")
+      .sort([[sortField, sortCriteria]])
+      .clone();
+  }
 
   res.status(200).json({
     success: true,
     products,
+    filteredProductNumber,
+    totalcountProduct,
   });
 });
 
@@ -252,7 +308,7 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
     });
   }
 
-  if (req.files.displayPhoto) {
+  if (req.files?.displayPhoto) {
     let products = await cloudinary.v2.uploader.destroy(
       product.displayPhoto.id
     );
@@ -261,8 +317,8 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
       req.files.displayPhoto.tempFilePath,
       {
         folder: "Products-Display-Photo",
-        width: "2500",
-        height: "3500",
+        width: "1000",
+        height: "1000",
       }
     );
     MainDisplayPhoto = {
@@ -271,7 +327,7 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
     };
   }
 
-  if (req.files.photos) {
+  if (req.files?.photos) {
     if (req.files.photos.constructor === Array) {
       for (let index = 0; index < product.photos.length; index++) {
         const res = await cloudinary.v2.uploader.destroy(
@@ -284,8 +340,8 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
           req.files.photos[index].tempFilePath,
           {
             folder: "Products-Photos",
-            width: "2500",
-            height: "3500",
+            width: "1000",
+            height: "1000",
           }
         );
         ImagesArray.push({
@@ -298,8 +354,8 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
         req.files.photos.tempFilePath,
         {
           folder: "Products-Photos",
-          width: "2500",
-          height: "3500",
+          width: "1000",
+          height: "1000",
         }
       );
       ImagesArray.push({

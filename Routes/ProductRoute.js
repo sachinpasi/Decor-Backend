@@ -13,10 +13,8 @@ const {
   DeleteReview,
   GetReviewsByProductId,
   GetProductsByCategory,
+  Admin_AddProductStockById,
 } = require("../Controllers/ProductController");
-const {
-  UpdateProductCountInCategory,
-} = require("../Middlewares/UpdateProductCountInCategory");
 
 const Router = express.Router();
 
@@ -28,18 +26,18 @@ Router.put("/review/add", isLoggedIn, AddReview);
 Router.delete("/review/delete/:id", isLoggedIn, DeleteReview);
 Router.get("/review/getReviewProductId", GetReviewsByProductId);
 
-Router.post(
-  "/admin/product/create",
-  isLoggedIn,
-  Role("admin"),
-  UpdateProductCountInCategory,
-  CreateProduct
-);
+Router.post("/admin/product/create", isLoggedIn, Role("admin"), CreateProduct);
 Router.get(
   "/admin/product/getAllProducts",
   isLoggedIn,
   Role("admin"),
   Admin_GetAllProducts
+);
+Router.put(
+  "/admin/product/addstock/:id",
+  isLoggedIn,
+  Role("admin"),
+  Admin_AddProductStockById
 );
 Router.put(
   "/admin/product/update/:id",

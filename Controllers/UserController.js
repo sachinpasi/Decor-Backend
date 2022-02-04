@@ -7,6 +7,7 @@ const cloudinary = require("cloudinary");
 const MailHelper = require("../Utils/EmailHelper");
 const crypto = require("crypto");
 const { validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
 
 exports.SignUp = SuperPromise(async (req, res, next) => {
   const errors = validationResult(req);
@@ -171,6 +172,23 @@ exports.Logout = SuperPromise(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Logout Success",
+  });
+});
+
+exports.CheckTokenExpiry = SuperPromise(async (req, res, next) => {
+  const token =
+    req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
+
+  jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
+    if (err) {
+      res.status(200).json({
+        isExpired: true,
+      });
+    } else {
+      res.status(200).json({
+        isExpired: false,
+      });
+    }
   });
 });
 

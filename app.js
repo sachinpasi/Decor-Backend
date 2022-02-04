@@ -40,12 +40,16 @@ const Home = require("./Routes/HomeRoute");
 const User = require("./Routes/UserRoutes");
 const Product = require("./Routes/ProductRoute");
 const Category = require("./Routes/CategoryRoute");
+const Payment = require("./Routes/PaymentRoutes");
+const Order = require("./Routes/OrderRoute");
 
 //Router Middleware
 app.use("/api/v1", Home);
 app.use("/api/v1", User);
 app.use("/api/v1", Product);
 app.use("/api/v1", Category);
+app.use("/api/v1", Payment);
+app.use("/api/v1", Order);
 
 app.get("/", (req, res) => {
   res.send("Decor Backend");
