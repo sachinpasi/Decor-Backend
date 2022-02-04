@@ -59,7 +59,7 @@ Router.post(
   Login
 );
 
-Router.get("/checkToken", CheckTokenExpiry);
+Router.get("/checkToken", isLoggedIn, CheckTokenExpiry);
 
 Router.route("/logout").get(Logout);
 Router.route("/forgotPassword").post(SendForgotPasswordLink);

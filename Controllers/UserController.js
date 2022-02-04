@@ -185,8 +185,10 @@ exports.CheckTokenExpiry = SuperPromise(async (req, res, next) => {
         isExpired: true,
       });
     } else {
+      const user = await User.findById(req.user.id);
       res.status(200).json({
         isExpired: false,
+        user,
       });
     }
   });
