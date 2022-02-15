@@ -93,7 +93,7 @@ exports.GetAllProducts = SuperPromise(async (req, res, next) => {
     productsObj.pager(parseInt(resultPerPage));
   }
 
-  if (req.params.category) {
+  if (req.params.category?.length !== 0) {
     products = await productsObj.base
       .find({ category: req.params.category })
       .populate("category")
