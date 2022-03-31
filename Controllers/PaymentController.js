@@ -1,5 +1,7 @@
 const SuperPromise = require("../Middlewares/SuperPromise");
 const stripe = require("stripe")(process.env.STRIPE_SECRET);
+const Razorpay = require("razorpay");
+const shortid = require("shortid");
 
 exports.SendStripeKey = SuperPromise(async (req, res, next) => {
   res.status(200).json({
@@ -23,21 +25,24 @@ exports.CaptureStripePayment = SuperPromise(async (req, res, next) => {
 
 exports.SendRazorpayKey = SuperPromise(async (req, res, next) => {
   res.status(200).json({
-    stripekey: process.env.RAZORPAY_API_KEY,
+    key: process.env.RAZORPAY_API_KEY,
   });
 });
 
 exports.CaptureRazorpayPayment = SuperPromise(async (req, res, next) => {
   var instance = new Razorpay({
     key_id: process.env.RAZORPAY_API_KEY,
-    key_secret: process.env.PAZORPAY_SECRET,
+    key_secret: process.env.RAZORPAY_SECRET,
   });
 
   const myOrder = await instance.orders.create({
-    amount: req.body.amount,
+    amount: (req.body.amount * 100).toString(),
     currency: "INR",
+    receipt: shortid.generate(),
+    payment_capture: 1,
   });
 
+  console.log(myOrder);
   res.status(200).json({
     success: true,
     myOrder,

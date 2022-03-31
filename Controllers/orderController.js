@@ -3,6 +3,7 @@ const Product = require("../Models/ProductModel");
 const SuperPromise = require("../Middlewares/SuperPromise");
 const { parse } = require("dotenv");
 const WhereClause = require("../Utils/WhereClause");
+const shortid = require("shortid");
 
 exports.CreateOrder = SuperPromise(async (req, res, next) => {
   const {
@@ -24,6 +25,7 @@ exports.CreateOrder = SuperPromise(async (req, res, next) => {
     shippingAmount,
     totalAmount,
     user: req.user._id,
+    orderId: shortid(),
   });
 
   orderItems?.forEach((item) => {

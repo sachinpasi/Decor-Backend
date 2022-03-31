@@ -22,8 +22,8 @@ exports.CreateProduct = SuperPromise(async (req, res, next) => {
       req.files.displayPhoto.tempFilePath,
       {
         folder: "Products-Display-Photo",
-        width: "1000",
-        height: "1000",
+        // width: "1920",
+        // height: "2880",
       }
     );
     MainDisplayPhoto = {
@@ -39,8 +39,8 @@ exports.CreateProduct = SuperPromise(async (req, res, next) => {
           req.files.photos[index].tempFilePath,
           {
             folder: "Products-Photos",
-            width: "1000",
-            height: "1000",
+            // width: "1920",
+            // height: "2880",
           }
         );
         ImagesArray.push({
@@ -53,8 +53,8 @@ exports.CreateProduct = SuperPromise(async (req, res, next) => {
         req.files.photos.tempFilePath,
         {
           folder: "products",
-          width: "1000",
-          height: "1000",
+          // width: "1920",
+          // height: "2880",
         }
       );
       ImagesArray.push({
@@ -317,8 +317,8 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
       req.files.displayPhoto.tempFilePath,
       {
         folder: "Products-Display-Photo",
-        width: "1000",
-        height: "1000",
+        width: "1920",
+        height: "2880",
       }
     );
     MainDisplayPhoto = {
@@ -340,8 +340,8 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
           req.files.photos[index].tempFilePath,
           {
             folder: "Products-Photos",
-            width: "1000",
-            height: "1000",
+            width: "1920",
+            height: "2880",
           }
         );
         ImagesArray.push({
@@ -354,8 +354,8 @@ exports.Admin_UpdateProductById = SuperPromise(async (req, res, next) => {
         req.files.photos.tempFilePath,
         {
           folder: "Products-Photos",
-          width: "1000",
-          height: "1000",
+          width: "1920",
+          height: "2880",
         }
       );
       ImagesArray.push({

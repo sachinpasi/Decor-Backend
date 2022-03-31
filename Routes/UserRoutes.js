@@ -82,7 +82,7 @@ Router.route("/admin/updateUserById/:id").put(
   Admin_UpdateUserById
 );
 
-Router.route("/admin/updateUserById/:id").delete(
+Router.route("/admin/deleteUserById/:id").delete(
   isLoggedIn,
   Role("admin"),
   Admin_DeleteUserById
